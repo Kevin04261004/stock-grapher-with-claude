@@ -1,0 +1,152 @@
+{
+ "generated": "2026-07-30",
+ "tickers": [
+  {
+   "ticker": "005930",
+   "name": "삼성전자",
+   "market": "KOSPI",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "000660",
+   "name": "SK하이닉스",
+   "market": "KOSPI",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "035420",
+   "name": "NAVER",
+   "market": "KOSPI",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "035720",
+   "name": "카카오",
+   "market": "KOSPI",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "005380",
+   "name": "현대차",
+   "market": "KOSPI",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "051910",
+   "name": "LG화학",
+   "market": "KOSPI",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "068270",
+   "name": "셀트리온",
+   "market": "KOSPI",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "069500",
+   "name": "KODEX 200",
+   "market": "ETF(KR)",
+   "currency": "KRW",
+   "start": "2014-05-09",
+   "end": "2026-07-30",
+   "rows": 3000
+  },
+  {
+   "ticker": "AAPL",
+   "name": "Apple",
+   "market": "NASDAQ",
+   "currency": "USD",
+   "start": "2005-01-03",
+   "end": "2026-07-29",
+   "rows": 5426
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "market": "NASDAQ",
+   "currency": "USD",
+   "start": "2005-01-03",
+   "end": "2026-07-29",
+   "rows": 5426
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA",
+   "market": "NASDAQ",
+   "currency": "USD",
+   "start": "2005-01-03",
+   "end": "2026-07-29",
+   "rows": 5426
+  },
+  {
+   "ticker": "TSLA",
+   "name": "Tesla",
+   "market": "NASDAQ",
+   "currency": "USD",
+   "start": "2010-06-29",
+   "end": "2026-07-29",
+   "rows": 4045
+  },
+  {
+   "ticker": "AMZN",
+   "name": "Amazon",
+   "market": "NASDAQ",
+   "currency": "USD",
+   "start": "2005-01-03",
+   "end": "2026-07-29",
+   "rows": 5426
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet",
+   "market": "NASDAQ",
+   "currency": "USD",
+   "start": "2005-01-03",
+   "end": "2026-07-29",
+   "rows": 5426
+  },
+  {
+   "ticker": "SPY",
+   "name": "SPDR S&P 500",
+   "market": "ETF(US)",
+   "currency": "USD",
+   "start": "2005-01-03",
+   "end": "2026-07-29",
+   "rows": 5426
+  },
+  {
+   "ticker": "QQQ",
+   "name": "Invesco QQQ",
+   "market": "ETF(US)",
+   "currency": "USD",
+   "start": "2005-01-03",
+   "end": "2026-07-29",
+   "rows": 5426
+  }
+ ],
+ "fx": [
+  "USDKRW"
+ ]
+}
