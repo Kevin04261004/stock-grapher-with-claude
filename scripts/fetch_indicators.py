@@ -4,7 +4,8 @@
 출처
 - 국내 지수: 네이버 금융 (히트맵과 같은 출처라 값이 어긋나지 않는다)
 - 해외 지수·환율·원자재·가상자산: Yahoo Finance chart API
-- 한국 물가·고용·금리: FRED CSV (인증키 없이 받을 수 있는 공개 CSV)
+- 한국 고용·금리: FRED CSV (인증키 없이 받을 수 있는 공개 CSV)
+- 한국 물가: IMF CPI (DBnomics 경유, 역시 인증키 불필요)
 
 한 지표를 못 가져오면 기존 파일의 값을 그대로 두고 경고만 남긴다.
 일부 출처가 잠깐 막혀도 나머지 지표는 갱신되도록 하기 위해서다.
@@ -27,9 +28,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import naver  # noqa: E402
 import yahoo  # noqa: E402
-from http_util import FetchError, fetch  # noqa: E402
+from http_util import FetchError, fetch, fetch_json  # noqa: E402
 
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
+DBNOMICS = "https://api.db.nomics.world/v22/series/{code}?observations=1"
 
 # (id, 이름, 카테고리, 단위, 소수 자릿수, 출처종류, 심볼)
 #
@@ -44,13 +46,16 @@ SPECS = [
     ("usdkrw", "원/달러 환율", "환율", "원", 2, "yahoo", "KRW=X"),
     ("ust10y", "미국 10년물 국채금리", "금리", "%", 3, "yahoo", "^TNX"),
     ("callrate", "한국 콜금리", "금리", "%", 2, "fred", "IRSTCI01KRM156N"),
-    ("cpi", "한국 소비자물가 상승률", "물가", "%", 2, "fred", "CPALTT01KRM659N"),
+    # 물가는 FRED 를 쓸 수 없다. OECD 가 MEI 데이터베이스를 접으면서 FRED 의
+    # 한국 CPI 계열(CPALTT01KRM659N, KORCPIALLMINMEI 등)이 2023-11 에서 통째로
+    # 멈췄고, 대체 계열도 2025-04 이 한계다. IMF 쪽이 가장 최근까지 나온다.
+    ("cpi", "한국 소비자물가 상승률", "물가", "%", 2, "dbnomics", "IMF/CPI/M.KR.PCPI_PC_CP_A_PT"),
     ("unemployment", "한국 실업률", "고용", "%", 2, "fred", "LRHUTTTTKRM156S"),
     ("wti", "WTI 유가", "원자재", "USD", 2, "yahoo", "CL=F"),
     ("btc", "비트코인", "가상자산", "USD", 0, "yahoo", "BTC-USD"),
 ]
 
-SOURCE_LABEL = "네이버 금융 · Yahoo Finance · FRED"
+SOURCE_LABEL = "네이버 금융 · Yahoo Finance · FRED · IMF"
 
 
 def fred_series(series_id: str) -> list[tuple[str, float]]:
@@ -79,6 +84,29 @@ def fred_series(series_id: str) -> list[tuple[str, float]]:
     return points
 
 
+def dbnomics_series(code: str) -> list[tuple[str, float]]:
+    """DBnomics 시계열. code 는 '제공자/데이터셋/계열' 형식."""
+    # 브라우저 흉내 헤더 없이(minimal) 요청해야 정상 응답한다.
+    doc = fetch_json(DBNOMICS.format(code=code), timeout=30, minimal=True)
+    docs = (doc.get("series") or {}).get("docs") or []
+    if not docs:
+        raise FetchError(f"{code}: DBnomics 응답에 계열이 없음")
+    series = docs[0]
+
+    # period 는 월간이면 '2025-07' 이지만 period_start_day 는 '2025-07-01' 로
+    # FRED 와 형식이 같다. 두 출처가 섞여도 날짜 표기가 어긋나지 않도록 이걸 쓴다.
+    days = series.get("period_start_day") or series.get("period") or []
+    points = [
+        (day, float(value))
+        for day, value in zip(days, series.get("value") or [])
+        if isinstance(value, (int, float))  # 결측치는 "NA" 문자열로 온다
+    ]
+    if not points:
+        raise FetchError(f"{code}: 유효한 관측치가 없음")
+    points.sort(key=lambda p: p[0])
+    return points
+
+
 def load_series(kind: str, symbol: str) -> list[tuple[str, float]]:
     if kind == "naver":
         return naver.index_history(symbol, points=60)
@@ -86,6 +114,8 @@ def load_series(kind: str, symbol: str) -> list[tuple[str, float]]:
         return yahoo.series(symbol, range_="6mo", interval="1d", tz="UTC")
     if kind == "fred":
         return fred_series(symbol)
+    if kind == "dbnomics":
+        return dbnomics_series(symbol)
     raise FetchError(f"알 수 없는 출처: {kind}")
 
 
