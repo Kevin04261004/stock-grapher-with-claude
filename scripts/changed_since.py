@@ -19,7 +19,7 @@ from pathlib import Path
 FILES = ("markets.json", "indicators.json")
 DATA = Path(__file__).resolve().parents[1] / "docs/data"
 
-IGNORED = ("fetchedAt",)
+IGNORED = ("fetchedAt", "macroFetchedAt")
 
 
 def signature(text: str) -> str | None:

@@ -41,7 +41,9 @@ jobs:
             --kosdaq "${{ github.event.inputs.kosdaq || '30' }}"
 
       - name: Fetch indicators
-        run: python3 scripts/fetch_indicators.py
+        # --force: 장중 마지막 갱신과 한 시간이 안 떨어져 있어도 월간 지표까지
+        # 전부 새로 받는다. 하루 한 번 도는 기준 수집이라 건너뛰면 안 된다.
+        run: python3 scripts/fetch_indicators.py --force
 
       - name: Sanity check
         run: python3 scripts/check_data.py
