@@ -27,7 +27,8 @@
 
 ## 데이터
 
-실제 시세를 쓴다. **실시간이 아니라 평일 장 마감 후 하루 한 번 갱신되는 종가 기준**이다.
+실제 시세를 쓴다. **평일 장중에는 10분마다, 장 마감 후 한 번 더 갱신**된다.
+체결 즉시 반영되는 실시간 시세는 아니다.
 
 | 데이터 | 출처 | 비고 |
 | --- | --- | --- |
@@ -48,17 +49,32 @@
 
 ### 갱신
 
-`.github/workflows/update-data.yml` 이 **평일 16:10 KST**(장 마감 15:30 이후)에 돌면서
-데이터를 받아 검사하고, 바뀐 게 있으면 커밋한 뒤 바로 배포한다.
-수동 실행은 Actions 탭의 *Update market data* → *Run workflow*.
+두 워크플로가 나눠 맡는다.
+
+| 워크플로 | 언제 | 하는 일 |
+| --- | --- | --- |
+| `update-intraday.yml` | 평일 09:00–15:50 KST, **10분마다** | 시세만 빠르게 갱신(요청 4번, 2~3초) 후 사이트에 반영 |
+| `update-data.yml` | 평일 16:10 KST | 업종 79개를 다시 훑어 종목 구성까지 새로 잡고 커밋 |
+
+장중 갱신은 **소스 브랜치에 커밋하지 않는다.** 하루 40번 넘게 커밋하면 히스토리를
+못 쓰게 되기 때문이다. 사이트가 읽는 `gh-pages` 에만 올린다. 이미 배포된 것과
+내용이 같으면(휴장일 등) 배포도 건너뛴다 — `changed_since.py` 가 `fetchedAt` 을 빼고
+비교한다.
+
+> GitHub 의 예약 실행은 정시를 보장하지 않는다. 부하가 걸리면 몇 분~수십 분 밀리거나
+> 건너뛴다. "10분마다"는 목표치이지 보장이 아니다.
 
 로컬에서 직접 돌릴 수도 있다.
 
 ```bash
-python3 scripts/fetch_markets.py       # docs/data/markets.json
-python3 scripts/fetch_indicators.py    # docs/data/indicators.json
-python3 scripts/check_data.py          # 내보내도 되는 상태인지 검사
+python3 scripts/fetch_markets.py            # 전체 수집 (1분 30초쯤)
+python3 scripts/fetch_markets.py --quick    # 시세만 갱신 (2~3초)
+python3 scripts/fetch_indicators.py [--quick]
+python3 scripts/check_data.py               # 내보내도 되는 상태인지 검사
 ```
+
+`--quick` 은 기존 `markets.json` 의 종목·업종 구성을 그대로 두고 시세만 덮어쓴다.
+그래서 장중에도 업종 구성이 흔들리지 않는다. 처음 한 번은 전체 수집이 필요하다.
 
 `fetch_markets.py` 옵션: `--kospi 40 --kosdaq 30 --sectors 12`.
 종목 수를 늘리면 정보량이 늘지만 휴대폰에서는 타일이 작아져 이름이 사라진다.
@@ -84,10 +100,12 @@ scripts/                     # 데이터 수집 (표준 라이브러리만)
 ├── yahoo.py                 # Yahoo Finance chart API
 ├── fetch_markets.py
 ├── fetch_indicators.py
-└── check_data.py            # 배포 전 데이터 검사
+├── check_data.py            # 배포 전 데이터 검사
+└── changed_since.py         # 배포본과 실질적으로 다른지 비교
 .github/workflows/
 ├── deploy-pages.yml         # docs/ 변경 시 배포
-└── update-data.yml          # 평일 데이터 갱신 + 배포
+├── update-intraday.yml      # 장중 10분마다 시세 갱신 + 배포
+└── update-data.yml          # 마감 후 전체 수집 + 커밋 + 배포
 ```
 
 ### 지표 데이터 형식

@@ -8,7 +8,11 @@
 지수 값이 어긋나면 안 되기 때문이다.
 
 사용법:
-    python3 scripts/fetch_markets.py [--kospi 40] [--kosdaq 30] [--sectors 12] [--out PATH]
+    # 전체 수집 (업종 79개 순회, 1분 30초쯤) — 장 마감 후 하루 한 번
+    python3 scripts/fetch_markets.py [--kospi 40] [--kosdaq 30] [--sectors 12]
+
+    # 빠른 갱신 (요청 4번, 몇 초) — 장중 10분마다
+    python3 scripts/fetch_markets.py --quick
 """
 
 from __future__ import annotations
@@ -180,8 +184,95 @@ def build_market(market_id, name, exchange, index_id, stocks, top_n, max_sectors
     }, index["date"], len(picked)
 
 
+def quick_refresh(path: Path) -> dict:
+    """
+    장중용 빠른 갱신.
+
+    업종 79개를 훑는 전체 수집은 1분 반쯤 걸린다. 장중에는 업종 구성이 바뀔 일이
+    없으므로 기존 파일의 종목·업종 구성을 그대로 두고 시세만 새로 받는다.
+    요청 수는 시장당 2번(시총 순위 + 지수)뿐이다.
+    """
+    if not path.exists():
+        raise FetchError(f"{path} 가 없어 빠른 갱신을 못 한다. 먼저 전체 수집을 돌릴 것")
+
+    doc = json.loads(path.read_text(encoding="utf-8"))
+
+    dates = []
+    for market in doc.get("markets", []):
+        index_id = next(
+            (m[3] for m in MARKETS if m[0] == market.get("id")), None
+        )
+        if not index_id:
+            raise FetchError(f"모르는 시장: {market.get('id')}")
+
+        # 시총 순위를 넉넉히 받아 둔다(구성이 조금 바뀌어도 덮을 수 있게).
+        # pageSize 상한이 100 이라 두 쪽으로 나눠 받는다.
+        fresh = {}
+        for page in (1, 2):
+            ranking = fetch_json(
+                f"{NAVER}/stocks/marketValue/{index_id}?page={page}&pageSize={PAGE_SIZE}"
+            )
+            rows = ranking.get("stocks") or []
+            for raw in rows:
+                parsed = parse_stock(raw, "")
+                if parsed:
+                    fresh[parsed["code"]] = parsed
+            if len(rows) < PAGE_SIZE:
+                break
+
+        held = missed = 0
+        for sector in market.get("sectors", []):
+            for stock in sector.get("stocks", []):
+                latest = fresh.get(stock["code"])
+                if not latest:
+                    missed += 1  # 순위 밖으로 밀린 종목은 직전 값을 유지한다
+                    continue
+                stock.update(
+                    price=latest["price"],
+                    change=latest["change"],
+                    changePct=latest["changePct"],
+                    cap=latest["cap"],
+                )
+                held += 1
+
+            sector["cap"] = sum(s["cap"] for s in sector["stocks"])
+            sector["changePct"] = round(
+                sum(s["changePct"] * s["cap"] for s in sector["stocks"]) / sector["cap"], 2
+            )
+            sector["stocks"].sort(key=lambda s: -s["cap"])
+
+        total = held + missed
+        if total and missed > total * 0.2:
+            raise FetchError(f"{market['name']}: {total}종목 중 {missed}개를 못 찾음")
+
+        market["sectors"].sort(key=lambda s: -s["cap"])
+        market["totalCap"] = sum(s["cap"] for s in market["sectors"])
+
+        index = naver.index_latest(index_id)
+        market["index"] = {
+            "value": round(index["value"], 2),
+            "change": round(index["change"], 2),
+            "changePct": round(index["changePct"], 2),
+        }
+        dates.append(index["date"])
+        print(
+            f"{market['name']}: {held}종목 갱신"
+            + (f" (미갱신 {missed})" if missed else "")
+            + f" / 지수 {market['index']['value']} ({market['index']['changePct']:+}%)",
+            file=sys.stderr,
+        )
+
+    doc["updatedAt"] = max(dates)
+    return doc
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--quick",
+        action="store_true",
+        help="장중용. 업종 구성은 그대로 두고 시세만 갱신한다",
+    )
     parser.add_argument("--kospi", type=int, default=40, help="코스피 상위 종목 수")
     parser.add_argument("--kosdaq", type=int, default=30, help="코스닥 상위 종목 수")
     parser.add_argument(
@@ -192,37 +283,44 @@ def main() -> int:
         default=str(Path(__file__).resolve().parents[1] / "docs/data/markets.json"),
     )
     args = parser.parse_args()
-    top = {"kospi": args.kospi, "kosdaq": args.kosdaq}
+    out = Path(args.out)
 
-    stocks = collect_stocks()
-    print(f"보통주 {len(stocks)}종목 수집", file=sys.stderr)
+    if args.quick:
+        doc = quick_refresh(out)
+    else:
+        top = {"kospi": args.kospi, "kosdaq": args.kosdaq}
+        stocks = collect_stocks()
+        print(f"보통주 {len(stocks)}종목 수집", file=sys.stderr)
 
-    markets, dates = [], []
-    for market_id, name, exchange, index_id in MARKETS:
-        market, date, count = build_market(
-            market_id, name, exchange, index_id, stocks, top[market_id], args.sectors
-        )
-        markets.append(market)
-        dates.append(date)
-        print(
-            f"{name}: {count}종목 / {len(market['sectors'])}업종 / "
-            f"지수 {market['index']['value']} ({market['index']['changePct']:+}%)",
-            file=sys.stderr,
-        )
+        markets, dates = [], []
+        for market_id, name, exchange, index_id in MARKETS:
+            market, date, count = build_market(
+                market_id, name, exchange, index_id, stocks, top[market_id], args.sectors
+            )
+            markets.append(market)
+            dates.append(date)
+            print(
+                f"{name}: {count}종목 / {len(market['sectors'])}업종 / "
+                f"지수 {market['index']['value']} ({market['index']['changePct']:+}%)",
+                file=sys.stderr,
+            )
 
-    doc = {
-        # updatedAt = 데이터의 기준일, fetchedAt = 수집을 돌린 시각
-        "updatedAt": max(dates),
-        "fetchedAt": dt.datetime.now(dt.timezone.utc)
+        doc = {
+            "updatedAt": max(dates),
+            "fetchedAt": None,  # 아래에서 채운다
+            "source": "네이버 금융",
+            "capUnit": "억원",
+            "markets": markets,
+        }
+
+    # updatedAt = 데이터의 기준일, fetchedAt = 수집을 돌린 시각
+    doc["fetchedAt"] = (
+        dt.datetime.now(dt.timezone.utc)
         .replace(microsecond=0)
         .isoformat()
-        .replace("+00:00", "Z"),
-        "source": "네이버 금융",
-        "capUnit": "억원",
-        "markets": markets,
-    }
+        .replace("+00:00", "Z")
+    )
 
-    out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {out}", file=sys.stderr)

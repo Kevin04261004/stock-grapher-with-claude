@@ -1,0 +1,59 @@
+name: Update intraday
+
+# 장중(09:00~15:30 KST) 10분마다 시세만 빠르게 받아 사이트에 반영한다.
+#
+# 소스 브랜치에는 커밋하지 않는다. 하루 40번 넘게 커밋하면 히스토리가 못 쓰게 되고,
+# 어차피 사이트가 읽는 건 gh-pages 에 올라간 파일이기 때문이다.
+# 소스 브랜치의 docs/data 는 장 마감 후 도는 update-data.yml 이 하루 한 번 갱신한다.
+on:
+  schedule:
+    # 00:00~06:50 UTC = 09:00~15:50 KST, 평일
+    - cron: "*/10 0-6 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  # 마감 후 전체 수집과 겹쳐 gh-pages 에 동시에 push 하지 않도록 묶는다.
+  group: data-publish
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch latest quotes
+        run: |
+          python3 scripts/fetch_markets.py --quick
+          python3 scripts/fetch_indicators.py --quick
+
+      - name: Sanity check
+        run: python3 scripts/check_data.py
+
+      - name: Compare with published data
+        id: diff
+        run: |
+          mkdir -p /tmp/published
+          if git fetch --depth=1 origin gh-pages 2>/dev/null; then
+            for f in markets.json indicators.json; do
+              git show FETCH_HEAD:data/$f > "/tmp/published/$f" 2>/dev/null || true
+            done
+          fi
+          echo "changed=$(python3 scripts/changed_since.py /tmp/published)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish docs/ to gh-pages
+        if: steps.diff.outputs.changed == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "deploy: 장중 갱신"

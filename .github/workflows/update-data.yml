@@ -19,7 +19,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: update-data
+  # 장중 갱신(update-intraday.yml)과 gh-pages push 가 겹치지 않도록 묶는다.
+  group: data-publish
   cancel-in-progress: false
 
 jobs:

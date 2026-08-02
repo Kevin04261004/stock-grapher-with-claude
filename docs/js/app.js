@@ -226,7 +226,11 @@ function renderMarket() {
       <span class="delta--down">▼ ${downs}</span>
       <span class="hm-summary__count">
         시총 상위 ${stocks.length}종목${
-          state.marketsMeta.updatedAt ? ` · ${fmtDate(state.marketsMeta.updatedAt)} 종가` : ''
+          state.marketsMeta.fetchedAt
+            ? ` · ${fmtDateTime(state.marketsMeta.fetchedAt)} 기준`
+            : state.marketsMeta.updatedAt
+              ? ` · ${fmtDate(state.marketsMeta.updatedAt)} 종가`
+              : ''
         }
       </span>
     </div>`;
