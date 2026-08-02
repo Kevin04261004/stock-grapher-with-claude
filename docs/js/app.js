@@ -4,17 +4,23 @@
  * 의존성 없는 순수 ES 모듈. 데이터는 ./data/indicators.json 에서 읽는다.
  */
 
-const DATA_URL = './data/indicators.json';
+import { createHeatmap, heatColor, COLOR_CAP } from './heatmap.js';
+
+const INDICATORS_URL = './data/indicators.json';
+const MARKETS_URL = './data/markets.json';
 const KEY_PINS = 'jp.pins';
 const KEY_THEME = 'jp.theme';
+const KEY_MARKET = 'jp.market';
 
 const state = {
   indicators: [],
   meta: {},
+  markets: [],
+  marketId: loadMarketId(),
   pins: loadPins(),
   query: '',
   category: '전체',
-  view: 'dashboard',
+  view: 'heatmap',
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -37,6 +43,14 @@ function savePins() {
     localStorage.setItem(KEY_PINS, JSON.stringify([...state.pins]));
   } catch (_) {
     /* 시크릿 모드 등에서 저장이 막혀도 앱은 계속 동작한다 */
+  }
+}
+
+function loadMarketId() {
+  try {
+    return localStorage.getItem(KEY_MARKET) || 'kospi';
+  } catch (_) {
+    return 'kospi';
   }
 }
 
@@ -107,7 +121,7 @@ function sparkline(values, trend, { w = 100, h = 40, pad = 3 } = {}) {
 }
 
 /* -------------------------------------------------------------------------
-   렌더링
+   지표 카드 (대시보드·목록 공용)
    ------------------------------------------------------------------------- */
 
 function cardHtml(ind) {
@@ -146,6 +160,106 @@ function renderGrid(el, list, emptyMessage) {
   }
   el.innerHTML = list.map(cardHtml).join('');
 }
+
+/* -------------------------------------------------------------------------
+   히트맵 (첫 화면)
+   ------------------------------------------------------------------------- */
+
+let heatmap;
+
+function fmtCap(cap) {
+  // 데이터 단위는 억원
+  if (cap >= 10000) {
+    const jo = cap / 10000;
+    return `${fmtNumber(jo, jo >= 100 ? 0 : 1)}조원`;
+  }
+  return `${fmtNumber(cap, 0)}억원`;
+}
+
+function currentMarket() {
+  return state.markets.find((m) => m.id === state.marketId) ?? state.markets[0];
+}
+
+function renderLegend() {
+  const steps = [];
+  for (let i = 0; i <= 10; i++) {
+    steps.push(`${heatColor(-COLOR_CAP + (2 * COLOR_CAP * i) / 10)} ${i * 10}%`);
+  }
+  $('#legendBar').style.background = `linear-gradient(90deg, ${steps.join(',')})`;
+}
+
+function renderMarket() {
+  const market = currentMarket();
+  if (!market) return;
+
+  document
+    .querySelectorAll('#marketSegmented button')
+    .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.market === market.id)));
+
+  const idx = market.index;
+  const trend = trendOf(idx.changePct);
+  const stocks = market.sectors.flatMap((s) => s.stocks);
+  const ups = stocks.filter((s) => s.changePct > 0).length;
+  const downs = stocks.filter((s) => s.changePct < 0).length;
+
+  $('#marketSummary').innerHTML = `
+    <div>
+      <span class="hm-summary__value">${fmtNumber(idx.value, 2)}</span>
+      <span class="delta delta--${trend}">
+        ${TREND_GLYPH[trend]} ${fmtSigned(idx.change, 2)} (${fmtSigned(idx.changePct, 2)}%)
+      </span>
+    </div>
+    <div class="hm-summary__breadth">
+      <span class="delta--up">▲ ${ups}</span>
+      <span class="delta--down">▼ ${downs}</span>
+      <span class="hm-summary__count">${stocks.length}종목</span>
+    </div>`;
+
+  heatmap.setMarket(market);
+}
+
+function setMarket(id) {
+  if (!state.markets.some((m) => m.id === id)) return;
+  state.marketId = id;
+  try {
+    localStorage.setItem(KEY_MARKET, id);
+  } catch (_) {}
+  renderMarket();
+}
+
+function openStockDetail(stock, sector, market) {
+  const trend = trendOf(stock.changePct);
+
+  $('#detailBody').innerHTML = `
+    <div class="sheet__grip"></div>
+    <div class="sheet__head">
+      <div>
+        <h2 class="sheet__title">${escapeHtml(stock.name)}</h2>
+        <span class="card__cat">${escapeHtml(market.name)} · ${escapeHtml(sector.name)}</span>
+      </div>
+      <span class="hm-swatch" style="background:${heatColor(stock.changePct)}" aria-hidden="true"></span>
+    </div>
+    <div class="sheet__value">
+      ${fmtNumber(stock.price, 0)}<span class="card__unit">원</span>
+    </div>
+    <div class="delta delta--${trend}">
+      ${TREND_GLYPH[trend]} ${fmtSigned(stock.change, 0)} (${fmtSigned(stock.changePct, 2)}%)
+    </div>
+    <dl class="statlist">
+      <div><dt>종목코드</dt><dd>${escapeHtml(stock.code)}</dd></div>
+      <div><dt>시가총액</dt><dd>${fmtCap(stock.cap)}</dd></div>
+      <div><dt>업종</dt><dd>${escapeHtml(sector.name)}</dd></div>
+      <div><dt>업종 등락</dt>
+           <dd class="delta--${trendOf(sector.changePct)}">${fmtSigned(sector.changePct, 2)}%</dd></div>
+    </dl>
+    <button class="sheet__close" type="button" data-close>닫기</button>`;
+
+  $('#detailDialog').showModal();
+}
+
+/* -------------------------------------------------------------------------
+   지표 화면 (대시보드 / 목록 / 설정)
+   ------------------------------------------------------------------------- */
 
 function renderDashboard() {
   const { indicators } = state;
@@ -206,6 +320,11 @@ function renderSettings() {
   $('#metaUpdatedAt').textContent = fmtDate(state.meta.updatedAt);
   $('#metaSource').textContent = state.meta.source || '—';
   $('#metaCount').textContent = `${state.indicators.length}개`;
+  $('#metaStocks').textContent = state.markets.length
+    ? state.markets
+        .map((m) => `${m.name} ${m.sectors.reduce((n, s) => n + s.stocks.length, 0)}`)
+        .join(' · ')
+    : '—';
   syncThemeButtons();
 }
 
@@ -361,6 +480,12 @@ function bindEvents() {
       return;
     }
 
+    const marketBtn = e.target.closest('[data-market]');
+    if (marketBtn) {
+      setMarket(marketBtn.dataset.market);
+      return;
+    }
+
     const chip = e.target.closest('[data-chip]');
     if (chip) {
       state.category = chip.dataset.chip;
@@ -423,34 +548,57 @@ function bindEvents() {
    ------------------------------------------------------------------------- */
 
 function showLoading() {
-  const skeletons = '<div class="skeleton"></div>'.repeat(3);
-  $('#moversGrid').innerHTML = skeletons;
+  $('#moversGrid').innerHTML = '<div class="skeleton"></div>'.repeat(3);
+  $('#heatmap').innerHTML = '<div class="skeleton skeleton--fill"></div>';
 }
 
-function showError(message) {
-  $('#statRow').innerHTML = '';
-  $('#pinnedGrid').innerHTML = '';
-  $('#moversGrid').innerHTML = `<p class="empty">${escapeHtml(message)}</p>`;
+const LOAD_ERROR =
+  '데이터를 불러오지 못했습니다. 로컬에서 열었다면 정적 서버로 실행해 주세요.';
+
+async function fetchJson(url) {
+  const res = await fetch(url, { cache: 'no-cache' });
+  if (!res.ok) throw new Error(`HTTP ${res.status} — ${url}`);
+  return res.json();
 }
 
 async function init() {
   bindEvents();
   syncThemeButtons();
+  renderLegend();
   showLoading();
 
-  try {
-    const res = await fetch(DATA_URL, { cache: 'no-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  heatmap = createHeatmap({
+    container: $('#heatmap'),
+    onSelectStock: openStockDetail,
+  });
 
-    const doc = await res.json();
+  const [indicators, markets] = await Promise.allSettled([
+    fetchJson(INDICATORS_URL),
+    fetchJson(MARKETS_URL),
+  ]);
+
+  if (markets.status === 'fulfilled') {
+    state.markets = markets.value.markets ?? [];
+    if (!state.markets.some((m) => m.id === state.marketId)) {
+      state.marketId = state.markets[0]?.id;
+    }
+    renderMarket();
+  } else {
+    console.error(markets.reason);
+    $('#heatmap').innerHTML = `<p class="empty">${escapeHtml(LOAD_ERROR)}</p>`;
+  }
+
+  if (indicators.status === 'fulfilled') {
+    const doc = indicators.value;
     state.indicators = doc.indicators ?? [];
     state.meta = { updatedAt: doc.updatedAt, source: doc.source };
-
     renderChips();
     renderAll();
-  } catch (err) {
-    console.error(err);
-    showError('지표 데이터를 불러오지 못했습니다. 로컬에서 열었다면 정적 서버로 실행해 주세요.');
+  } else {
+    console.error(indicators.reason);
+    $('#statRow').innerHTML = '';
+    $('#pinnedGrid').innerHTML = '';
+    $('#moversGrid').innerHTML = `<p class="empty">${escapeHtml(LOAD_ERROR)}</p>`;
   }
 }
 

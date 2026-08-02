@@ -332,6 +332,165 @@ button { font: inherit; color: inherit; }
 .spark--down { color: var(--down); }
 .spark--flat { color: var(--flat); }
 
+/* --- 히트맵 ------------------------------------------------------------ */
+
+.segmented--wide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 4px;
+}
+.segmented--wide button { padding: 9px 12px; font-size: 14px; }
+
+.hm-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 12px 2px 8px;
+}
+
+.hm-summary__value {
+  margin-right: 6px;
+  font-size: 22px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.hm-summary .delta { margin-top: 0; font-size: 13px; }
+
+.hm-summary__breadth {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.hm-summary__count { color: var(--muted); font-weight: 400; }
+
+/* 히트맵 화면은 세로로 꽉 채운다. 위아래 요소가 자리를 잡고 남은 공간을
+   보드가 전부 가져가므로, 첫 화면에서 스크롤 없이 지도 전체가 보인다. */
+#view-heatmap {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  min-height: calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+.hm-board {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 300px;
+  max-height: 680px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.hm-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.hm-sector {
+  position: absolute;
+  border-radius: 4px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.hm-sector__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  height: 17px;
+  padding: 0 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+/* 업종명이 길어도 등락률이 잘리지 않도록, 줄어드는 쪽은 업종명으로 고정한다. */
+.hm-sector__head > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hm-sector__pct { flex: none; font-variant-numeric: tabular-nums; }
+
+.hm-tile {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 0 2px;
+  overflow: hidden;
+  color: #fff;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1.15;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+}
+.hm-tile:active { filter: brightness(1.15); }
+@media (hover: hover) {
+  .hm-tile:hover { outline: 2px solid #fff; outline-offset: -2px; }
+}
+
+.hm-tile__name {
+  max-width: 100%;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hm-tile__pct {
+  max-width: 100%;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0.92;
+}
+
+.hm-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 2px 0;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.hm-legend__bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.hm-note {
+  margin: 8px 2px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+/* 세로가 짧은 기기에서는 설명 문구를 접고 지도에 자리를 더 준다. */
+@media (max-height: 700px) {
+  .hm-note { display: none; }
+}
+
+.hm-swatch {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
 /* --- 검색 / 필터 ------------------------------------------------------- */
 
 .search {
@@ -600,6 +759,8 @@ button { font: inherit; color: inherit; }
 }
 
 /* --- 스켈레톤 ---------------------------------------------------------- */
+
+.skeleton--fill { height: 100%; border-radius: 0; }
 
 .skeleton {
   height: 132px;

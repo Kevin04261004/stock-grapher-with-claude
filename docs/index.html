@@ -40,8 +40,29 @@
   </header>
 
   <main id="main" class="main">
+    <!-- 히트맵 (첫 화면) -->
+    <section id="view-heatmap" class="view" role="tabpanel" aria-labelledby="tab-heatmap" tabindex="-1">
+      <div class="segmented segmented--wide" id="marketSegmented" role="group" aria-label="시장 선택">
+        <button type="button" data-market="kospi">코스피</button>
+        <button type="button" data-market="kosdaq">코스닥</button>
+      </div>
+
+      <div class="hm-summary" id="marketSummary"></div>
+
+      <div class="hm-board">
+        <div id="heatmap" class="hm-canvas"></div>
+      </div>
+
+      <div class="hm-legend" aria-hidden="true">
+        <span>−3%</span>
+        <span class="hm-legend__bar" id="legendBar"></span>
+        <span>+3%</span>
+      </div>
+      <p class="hm-note">타일 크기 = 시가총액, 색 = 등락률. 누르면 상세가 열립니다.</p>
+    </section>
+
     <!-- 대시보드 -->
-    <section id="view-dashboard" class="view" role="tabpanel" aria-labelledby="tab-dashboard" tabindex="-1">
+    <section id="view-dashboard" class="view" role="tabpanel" aria-labelledby="tab-dashboard" tabindex="-1" hidden>
       <div class="stat-row" id="statRow"></div>
 
       <h2 class="section-title">
@@ -96,6 +117,10 @@
           <span class="row__label">지표 수</span>
           <span class="row__value" id="metaCount">—</span>
         </div>
+        <div class="row">
+          <span class="row__label">히트맵 종목</span>
+          <span class="row__value" id="metaStocks">—</span>
+        </div>
       </div>
 
       <h2 class="section-title">저장된 항목</h2>
@@ -108,8 +133,13 @@
   </main>
 
   <nav class="tabbar" role="tablist" aria-label="주요 화면">
+    <button id="tab-heatmap" class="tab" role="tab" type="button"
+            aria-selected="true" aria-controls="view-heatmap" data-view="heatmap">
+      <span class="tab__glyph" aria-hidden="true">▩</span>
+      <span class="tab__label">히트맵</span>
+    </button>
     <button id="tab-dashboard" class="tab" role="tab" type="button"
-            aria-selected="true" aria-controls="view-dashboard" data-view="dashboard">
+            aria-selected="false" aria-controls="view-dashboard" data-view="dashboard" tabindex="-1">
       <span class="tab__glyph" aria-hidden="true">▦</span>
       <span class="tab__label">대시보드</span>
     </button>
