@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+# docs/ 를 gh-pages 브랜치로 발행한다.
+# (GITHUB_TOKEN으로는 Pages 사이트 신규 생성 API를 못 쓰므로,
+#  gh-pages 브랜치 자동 활성화 방식을 사용)
+on:
+  push:
+    branches:
+      - main
+      - claude/spec-implementation-git-pages-gxlukz
+    paths:
+      - "docs/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish docs/ to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "deploy: ${{ github.sha }}"
