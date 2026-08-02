@@ -84,8 +84,11 @@ jobs:
           while python3 scripts/wait_next_tick.py --until "$UNTIL"; do
             stamp="$(TZ=Asia/Seoul date +%H:%M)"
 
+            # 히트맵은 업종 구성만 재사용하고 시세는 전 종목 새로 받는다(--quick).
+            # 지표는 11개 전부 새로 받는다 — 환율·비트코인·WTI 는 국내 장중에도
+            # 계속 움직이므로 국내 지수만 갱신하면 나머지가 전날 값으로 얼어붙는다.
             if ! python3 scripts/fetch_markets.py --quick \
-              || ! python3 scripts/fetch_indicators.py --quick; then
+              || ! python3 scripts/fetch_indicators.py; then
               echo "::warning::$stamp 수집 실패 — 이번 눈금 건너뜀"
               continue
             fi

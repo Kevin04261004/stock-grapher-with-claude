@@ -32,6 +32,10 @@ from http_util import FetchError, fetch  # noqa: E402
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
 
 # (id, 이름, 카테고리, 단위, 소수 자릿수, 출처종류, 심볼)
+#
+# 국내 지수를 맨 앞에 두는 데는 이유가 있다. 장중 갱신은 fetch_markets.py 직후에
+# 이 스크립트를 돌리는데, 두 파일의 지수 값이 어긋나면 check_data.py 가 배포를
+# 막는다. 네이버를 먼저 찍어야 그 사이 지수가 움직일 틈이 가장 좁다.
 SPECS = [
     ("kospi", "KOSPI", "시장", "pt", 2, "naver", "KOSPI"),
     ("kosdaq", "KOSDAQ", "시장", "pt", 2, "naver", "KOSDAQ"),
@@ -110,11 +114,6 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--points", type=int, default=30, help="시계열 표본 수")
     parser.add_argument(
-        "--quick",
-        action="store_true",
-        help="장중용. 국내 지수만 갱신하고 나머지는 기존 값을 그대로 둔다",
-    )
-    parser.add_argument(
         "--out",
         default=str(Path(__file__).resolve().parents[1] / "docs/data/indicators.json"),
     )
@@ -131,13 +130,7 @@ def main() -> int:
 
     indicators, failed = [], []
     for spec in SPECS:
-        ind_id, name, kind = spec[0], spec[1], spec[5]
-
-        # 장중에는 국내 지수만 새로 받는다. 히트맵과 지수 값이 어긋나면 안 되므로
-        # 이 둘은 반드시 갱신하고, 해외·거시 지표는 장중에 바뀔 일이 거의 없다.
-        if args.quick and kind != "naver" and ind_id in previous:
-            indicators.append(previous[ind_id])
-            continue
+        ind_id, name = spec[0], spec[1]
 
         try:
             indicator = build_indicator(spec, args.points)
