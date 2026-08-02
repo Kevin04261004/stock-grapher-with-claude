@@ -16,6 +16,7 @@ const state = {
   indicators: [],
   meta: {},
   markets: [],
+  marketsMeta: {},
   marketId: loadMarketId(),
   pins: loadPins(),
   query: '',
@@ -74,6 +75,17 @@ function fmtDate(iso) {
   if (!iso) return '—';
   const [y, m, d] = iso.split('-');
   return `${y}. ${Number(m)}. ${Number(d)}.`;
+}
+
+/** 수집 시각(UTC ISO)을 보는 사람의 시간대로 옮겨 보여 준다. */
+function fmtDateTime(iso) {
+  if (!iso) return '—';
+  const at = new Date(iso);
+  if (Number.isNaN(at.getTime())) return '—';
+  return new Intl.DateTimeFormat('ko-KR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(at);
 }
 
 function trendOf(value) {
@@ -212,7 +224,11 @@ function renderMarket() {
     <div class="hm-summary__breadth">
       <span class="delta--up">▲ ${ups}</span>
       <span class="delta--down">▼ ${downs}</span>
-      <span class="hm-summary__count">${stocks.length}종목</span>
+      <span class="hm-summary__count">
+        시총 상위 ${stocks.length}종목${
+          state.marketsMeta.updatedAt ? ` · ${fmtDate(state.marketsMeta.updatedAt)} 종가` : ''
+        }
+      </span>
     </div>`;
 
   heatmap.setMarket(market);
@@ -325,6 +341,9 @@ function renderSettings() {
         .map((m) => `${m.name} ${m.sectors.reduce((n, s) => n + s.stocks.length, 0)}`)
         .join(' · ')
     : '—';
+  $('#metaFetchedAt').textContent = fmtDateTime(
+    state.meta.fetchedAt || state.marketsMeta.fetchedAt
+  );
   syncThemeButtons();
 }
 
@@ -579,6 +598,11 @@ async function init() {
 
   if (markets.status === 'fulfilled') {
     state.markets = markets.value.markets ?? [];
+    state.marketsMeta = {
+      updatedAt: markets.value.updatedAt,
+      source: markets.value.source,
+      fetchedAt: markets.value.fetchedAt,
+    };
     if (!state.markets.some((m) => m.id === state.marketId)) {
       state.marketId = state.markets[0]?.id;
     }
@@ -591,7 +615,11 @@ async function init() {
   if (indicators.status === 'fulfilled') {
     const doc = indicators.value;
     state.indicators = doc.indicators ?? [];
-    state.meta = { updatedAt: doc.updatedAt, source: doc.source };
+    state.meta = {
+      updatedAt: doc.updatedAt,
+      source: doc.source,
+      fetchedAt: doc.fetchedAt,
+    };
     renderChips();
     renderAll();
   } else {

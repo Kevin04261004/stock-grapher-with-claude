@@ -1,0 +1,71 @@
+name: Update market data
+
+# 국내 장 마감(15:30 KST) 이후 시세를 받아 docs/data/*.json 을 갱신한다.
+# GITHUB_TOKEN 으로 push 하면 다른 워크플로가 트리거되지 않으므로
+# (무한 루프 방지 정책) 배포까지 이 워크플로 안에서 직접 한다.
+on:
+  schedule:
+    - cron: "10 7 * * 1-5" # 07:10 UTC = 16:10 KST, 평일
+  workflow_dispatch:
+    inputs:
+      kospi:
+        description: "코스피 상위 종목 수"
+        default: "40"
+      kosdaq:
+        description: "코스닥 상위 종목 수"
+        default: "30"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          # 수집 스크립트는 표준 라이브러리만 쓰므로 설치할 의존성이 없다.
+
+      - name: Fetch market heatmap data
+        run: |
+          python3 scripts/fetch_markets.py \
+            --kospi "${{ github.event.inputs.kospi || '40' }}" \
+            --kosdaq "${{ github.event.inputs.kosdaq || '30' }}"
+
+      - name: Fetch indicators
+        run: python3 scripts/fetch_indicators.py
+
+      - name: Sanity check
+        run: python3 scripts/check_data.py
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          if git diff --quiet -- docs/data; then
+            echo "변경 없음 — 커밋 생략"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data
+          git commit -m "데이터 갱신: $(date -u +%Y-%m-%d\ %H:%MZ)"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Publish docs/ to gh-pages
+        if: steps.commit.outputs.changed == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "deploy: 데이터 갱신"

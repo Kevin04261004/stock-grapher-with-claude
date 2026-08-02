@@ -25,7 +25,43 @@
 - 히트맵은 화면 높이에 맞춰 자동으로 늘고 줄며, 회전하면 다시 배치된다
 - 차트는 외부 라이브러리 없이 SVG 스파크라인·트리맵으로 직접 그린다
 
-> 표시되는 값은 전부 **샘플 데이터**이며 실제 시세가 아니다.
+## 데이터
+
+실제 시세를 쓴다. **실시간이 아니라 평일 장 마감 후 하루 한 번 갱신되는 종가 기준**이다.
+
+| 데이터 | 출처 | 비고 |
+| --- | --- | --- |
+| 코스피·코스닥 종목 (가격·등락·시가총액·업종) | 네이버 금융 모바일 API | 시총 상위만 추림 |
+| 코스피·코스닥 지수 | 네이버 금융 | 히트맵·지표 화면이 같은 값을 쓴다 |
+| S&P 500 · 나스닥 · 원/달러 · 미10년물 · WTI · 비트코인 | Yahoo Finance chart API | |
+| 한국 콜금리 · 소비자물가 상승률 · 실업률 | FRED (공개 CSV) | 월 단위 |
+
+인증키가 필요한 출처는 쓰지 않으므로 별도 시크릿 설정 없이 동작한다.
+수집 스크립트도 표준 라이브러리만 쓴다(설치할 의존성 없음).
+
+> **주의**
+> - 지연된 종가이고 오류·누락이 있을 수 있다. 투자 판단의 근거로 쓰지 말 것.
+> - 네이버 금융 데이터는 공식 공개 API 가 아니다. 개인 학습용으로 쓰고,
+>   재배포·상업적 이용은 각 출처의 이용약관을 확인해야 한다.
+>   공식 경로가 필요하면 [KRX 오픈API](http://openapi.krx.co.kr) 로 바꿔 끼우면 된다
+>   (무료지만 인증키 발급이 필요하고, 발급받은 키는 저장소 시크릿으로 넣어야 한다).
+
+### 갱신
+
+`.github/workflows/update-data.yml` 이 **평일 16:10 KST**(장 마감 15:30 이후)에 돌면서
+데이터를 받아 검사하고, 바뀐 게 있으면 커밋한 뒤 바로 배포한다.
+수동 실행은 Actions 탭의 *Update market data* → *Run workflow*.
+
+로컬에서 직접 돌릴 수도 있다.
+
+```bash
+python3 scripts/fetch_markets.py       # docs/data/markets.json
+python3 scripts/fetch_indicators.py    # docs/data/indicators.json
+python3 scripts/check_data.py          # 내보내도 되는 상태인지 검사
+```
+
+`fetch_markets.py` 옵션: `--kospi 40 --kosdaq 30 --sectors 12`.
+종목 수를 늘리면 정보량이 늘지만 휴대폰에서는 타일이 작아져 이름이 사라진다.
 
 ## 구조
 
@@ -42,15 +78,25 @@ docs/                        # 그대로 배포되는 정적 사이트
 └── data/
     ├── indicators.json      # 거시 지표
     └── markets.json         # 코스피·코스닥 종목
-.github/workflows/deploy-pages.yml
+scripts/                     # 데이터 수집 (표준 라이브러리만)
+├── http_util.py             # 재시도·레이트리밋 대응 HTTP
+├── naver.py                 # 네이버 금융 API
+├── yahoo.py                 # Yahoo Finance chart API
+├── fetch_markets.py
+├── fetch_indicators.py
+└── check_data.py            # 배포 전 데이터 검사
+.github/workflows/
+├── deploy-pages.yml         # docs/ 변경 시 배포
+└── update-data.yml          # 평일 데이터 갱신 + 배포
 ```
 
 ### 지표 데이터 형식
 
 ```jsonc
 {
-  "updatedAt": "2026-08-01",
-  "source": "샘플 데이터 (실제 시세 아님)",
+  "updatedAt": "2026-07-31",   // 가장 최근 관측치의 날짜
+  "fetchedAt": "2026-08-02T05:20:00Z", // 수집을 돌린 시각
+  "source": "네이버 금융 · Yahoo Finance · FRED",
   "indicators": [
     {
       "id": "kospi",
@@ -73,7 +119,9 @@ docs/                        # 그대로 배포되는 정적 사이트
 
 ```jsonc
 {
-  "updatedAt": "2026-08-01",
+  "updatedAt": "2026-07-31",           // 종가 기준일
+  "fetchedAt": "2026-08-02T05:20:00Z", // 수집을 돌린 시각
+  "source": "네이버 금융",
   "capUnit": "억원",
   "markets": [
     {
@@ -130,7 +178,6 @@ python3 -m http.server 8000 --directory docs
 
 ## 다음 단계 후보
 
-- 실제 데이터 수집 파이프라인 (스케줄 워크플로우로 `indicators.json` · `markets.json` 갱신)
 - 히트맵 기준 전환(등락률 / 거래대금 / 시가총액)과 기간 선택
 - 종목 상세에 주가 차트, 히트맵에서 즐겨찾기 종목만 보기
 - 지표 임계값 알림, 지표 간 비교
