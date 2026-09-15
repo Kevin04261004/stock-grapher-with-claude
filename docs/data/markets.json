@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-14",
-  "fetchedAt": "2026-09-14T13:59:20Z",
+  "updatedAt": "2026-09-15",
+  "fetchedAt": "2026-09-15T12:39:10Z",
   "source": "네이버 금융",
   "capUnit": "억원",
   "markets": [
@@ -8,420 +8,420 @@
       "id": "kospi",
       "name": "코스피",
       "index": {
-        "value": 6684.37,
-        "change": -225.54,
-        "changePct": -3.26
+        "value": 6627.26,
+        "change": -57.11,
+        "changePct": -0.85
       },
-      "totalCap": 42660872,
+      "totalCap": 42929014,
       "sectors": [
         {
           "name": "반도체와반도체장비",
-          "cap": 28356835,
-          "changePct": -5.66,
+          "cap": 28703118,
+          "changePct": 0.75,
           "stocks": [
             {
               "code": "005930",
               "name": "삼성전자",
-              "price": 248500,
-              "change": -11000,
-              "changePct": -4.24,
-              "cap": 14528002
+              "price": 250500,
+              "change": 1500,
+              "changePct": 0.6,
+              "cap": 14644928
             },
             {
               "code": "000660",
               "name": "SK하이닉스",
-              "price": 1683000,
-              "change": -129000,
-              "changePct": -7.12,
-              "cap": 12294187
+              "price": 1712000,
+              "change": 15000,
+              "changePct": 0.88,
+              "cap": 12506029
             },
             {
               "code": "402340",
               "name": "SK스퀘어",
-              "price": 1000000,
-              "change": -89000,
-              "changePct": -8.17,
-              "cap": 1319240
+              "price": 1014000,
+              "change": 14000,
+              "changePct": 1.4,
+              "cap": 1337709
             },
             {
               "code": "042700",
               "name": "한미반도체",
-              "price": 226000,
-              "change": -5000,
-              "changePct": -2.16,
-              "cap": 215406
+              "price": 225000,
+              "change": 0,
+              "changePct": 0.0,
+              "cap": 214452
             }
           ]
         },
         {
           "name": "기타",
-          "cap": 3142153,
-          "changePct": -2.67,
+          "cap": 3336255,
+          "changePct": -1.52,
           "stocks": [
             {
-              "code": "034020",
-              "name": "두산에너빌리티",
-              "price": 85600,
-              "change": -5200,
-              "changePct": -5.73,
-              "cap": 548320
+              "code": "012450",
+              "name": "한화에어로스페이스",
+              "price": 1066000,
+              "change": -71000,
+              "changePct": -6.24,
+              "cap": 549666
             },
             {
               "code": "012330",
               "name": "현대모비스",
-              "price": 397000,
-              "change": -18500,
-              "changePct": -4.45,
-              "cap": 356588
+              "price": 398000,
+              "change": -2000,
+              "changePct": -0.5,
+              "cap": 357486
             },
             {
               "code": "066570",
               "name": "LG전자",
-              "price": 194900,
-              "change": -4600,
-              "changePct": -2.31,
-              "cap": 317462
+              "price": 202000,
+              "change": 3800,
+              "changePct": 1.92,
+              "cap": 329027
             },
             {
               "code": "035420",
               "name": "NAVER",
-              "price": 203000,
-              "change": -3500,
-              "changePct": -1.69,
-              "cap": 308752
+              "price": 205500,
+              "change": 1500,
+              "changePct": 0.74,
+              "cap": 312554
             },
             {
               "code": "000810",
               "name": "삼성화재",
-              "price": 673000,
-              "change": -13000,
-              "changePct": -1.9,
-              "cap": 300477
+              "price": 661000,
+              "change": -14000,
+              "changePct": -2.07,
+              "cap": 295120
             },
             {
               "code": "005490",
               "name": "POSCO홀딩스",
-              "price": 321500,
-              "change": -12500,
-              "changePct": -3.74,
-              "cap": 254762
+              "price": 332000,
+              "change": 6000,
+              "changePct": 1.84,
+              "cap": 263082
             },
             {
               "code": "010130",
               "name": "고려아연",
-              "price": 1152000,
+              "price": 1136000,
               "change": -27000,
-              "changePct": -2.29,
-              "cap": 240457
+              "changePct": -2.32,
+              "cap": 237117
             },
             {
               "code": "138040",
               "name": "메리츠금융지주",
-              "price": 132000,
-              "change": 3600,
-              "changePct": 2.8,
-              "cap": 220898
+              "price": 126900,
+              "change": -5100,
+              "changePct": -3.86,
+              "cap": 212364
             },
             {
               "code": "015760",
               "name": "한국전력",
-              "price": 31850,
-              "change": -1250,
-              "changePct": -3.78,
-              "cap": 204466
+              "price": 31600,
+              "change": -350,
+              "changePct": -1.1,
+              "cap": 202861
             },
             {
               "code": "011200",
               "name": "HMM",
-              "price": 21100,
-              "change": 250,
-              "changePct": 1.2,
-              "cap": 199023
+              "price": 20750,
+              "change": -500,
+              "changePct": -2.35,
+              "cap": 195722
+            },
+            {
+              "code": "051910",
+              "name": "LG화학",
+              "price": 270500,
+              "change": 2500,
+              "changePct": 0.93,
+              "cap": 190952
             },
             {
               "code": "017670",
               "name": "SK텔레콤",
-              "price": 88900,
-              "change": -2000,
-              "changePct": -2.2,
-              "cap": 190948
+              "price": 88600,
+              "change": -1500,
+              "changePct": -1.66,
+              "cap": 190304
             }
           ]
         },
         {
           "name": "은행",
-          "cap": 1834141,
-          "changePct": 2.3,
+          "cap": 1791022,
+          "changePct": -2.4,
           "stocks": [
             {
               "code": "105560",
               "name": "KB금융",
-              "price": 181200,
-              "change": 3300,
-              "changePct": 1.85,
-              "cap": 642694
+              "price": 176400,
+              "change": -5200,
+              "changePct": -2.86,
+              "cap": 625669
             },
             {
               "code": "055550",
               "name": "신한지주",
-              "price": 115000,
-              "change": 2100,
-              "changePct": 1.86,
-              "cap": 539868
+              "price": 111900,
+              "change": -2700,
+              "changePct": -2.36,
+              "cap": 525315
             },
             {
               "code": "086790",
               "name": "하나금융지주",
-              "price": 140400,
-              "change": 2600,
-              "changePct": 1.89,
-              "cap": 380442
+              "price": 137500,
+              "change": -3300,
+              "changePct": -2.34,
+              "cap": 372584
             },
             {
               "code": "316140",
               "name": "우리금융지주",
-              "price": 36800,
-              "change": 1700,
-              "changePct": 4.84,
-              "cap": 271137
-            }
-          ]
-        },
-        {
-          "name": "조선",
-          "cap": 1396306,
-          "changePct": -0.77,
-          "stocks": [
-            {
-              "code": "329180",
-              "name": "HD현대중공업",
-              "price": 470000,
-              "change": -9000,
-              "changePct": -1.88,
-              "cap": 493318
-            },
-            {
-              "code": "042660",
-              "name": "한화오션",
-              "price": 85200,
-              "change": -400,
-              "changePct": -0.47,
-              "cap": 261064
-            },
-            {
-              "code": "009540",
-              "name": "HD한국조선해양",
-              "price": 361000,
-              "change": -4500,
-              "changePct": -1.23,
-              "cap": 255491
-            },
-            {
-              "code": "010140",
-              "name": "삼성중공업",
-              "price": 22100,
-              "change": 700,
-              "changePct": 3.27,
-              "cap": 194480
-            },
-            {
-              "code": "267250",
-              "name": "HD현대",
-              "price": 243000,
-              "change": -4500,
-              "changePct": -1.82,
-              "cap": 191953
+              "price": 36300,
+              "change": -550,
+              "changePct": -1.49,
+              "cap": 267454
             }
           ]
         },
         {
           "name": "전기제품",
-          "cap": 1249249,
-          "changePct": -2.52,
+          "cap": 1294616,
+          "changePct": 3.46,
           "stocks": [
             {
               "code": "373220",
               "name": "LG에너지솔루션",
-              "price": 351000,
-              "change": -9000,
-              "changePct": -2.5,
-              "cap": 821340
+              "price": 363500,
+              "change": 12000,
+              "changePct": 3.41,
+              "cap": 850590
             },
             {
               "code": "006400",
               "name": "삼성SDI",
-              "price": 531000,
-              "change": -14000,
-              "changePct": -2.57,
-              "cap": 427909
+              "price": 551000,
+              "change": 19000,
+              "changePct": 3.57,
+              "cap": 444026
             }
           ]
         },
         {
           "name": "자동차",
-          "cap": 1234645,
-          "changePct": -3.35,
+          "cap": 1234055,
+          "changePct": -0.92,
           "stocks": [
             {
               "code": "005380",
               "name": "현대차",
-              "price": 367500,
-              "change": -15000,
-              "changePct": -3.92,
-              "cap": 752485
+              "price": 369500,
+              "change": -2000,
+              "changePct": -0.54,
+              "cap": 756580
             },
             {
               "code": "000270",
               "name": "기아",
-              "price": 123500,
-              "change": -3100,
-              "changePct": -2.45,
-              "cap": 482160
+              "price": 122300,
+              "change": -1900,
+              "changePct": -1.53,
+              "cap": 477475
+            }
+          ]
+        },
+        {
+          "name": "조선",
+          "cap": 1154569,
+          "changePct": -5.17,
+          "stocks": [
+            {
+              "code": "329180",
+              "name": "HD현대중공업",
+              "price": 452500,
+              "change": -26500,
+              "changePct": -5.53,
+              "cap": 474950
+            },
+            {
+              "code": "042660",
+              "name": "한화오션",
+              "price": 83100,
+              "change": -2800,
+              "changePct": -3.26,
+              "cap": 254630
+            },
+            {
+              "code": "009540",
+              "name": "HD한국조선해양",
+              "price": 340000,
+              "change": -23500,
+              "changePct": -6.46,
+              "cap": 240629
+            },
+            {
+              "code": "010140",
+              "name": "삼성중공업",
+              "price": 20950,
+              "change": -1150,
+              "changePct": -5.2,
+              "cap": 184360
             }
           ]
         },
         {
           "name": "제약",
-          "cap": 1060731,
-          "changePct": -0.82,
+          "cap": 1066298,
+          "changePct": -0.65,
           "stocks": [
             {
               "code": "207940",
               "name": "삼성바이오로직스",
-              "price": 1402000,
-              "change": -13000,
-              "changePct": -0.92,
-              "cap": 648999
+              "price": 1409000,
+              "change": -11000,
+              "changePct": -0.77,
+              "cap": 652239
             },
             {
               "code": "068270",
               "name": "셀트리온",
-              "price": 177000,
-              "change": -1200,
-              "changePct": -0.67,
-              "cap": 411732
+              "price": 178000,
+              "change": -800,
+              "changePct": -0.45,
+              "cap": 414059
             }
           ]
         },
         {
           "name": "전자장비와기기",
-          "cap": 987451,
-          "changePct": -5.57,
+          "cap": 993426,
+          "changePct": -0.52,
           "stocks": [
             {
               "code": "009150",
               "name": "삼성전기",
-              "price": 1322000,
-              "change": -78000,
-              "changePct": -5.57,
-              "cap": 987451
+              "price": 1330000,
+              "change": -7000,
+              "changePct": -0.52,
+              "cap": 993426
             }
           ]
         },
         {
           "name": "전기장비",
-          "cap": 819642,
-          "changePct": -2.67,
+          "cap": 804718,
+          "changePct": -2.64,
           "stocks": [
             {
               "code": "010120",
               "name": "LS ELECTRIC",
-              "price": 197500,
-              "change": -7000,
-              "changePct": -3.42,
-              "cap": 296250
+              "price": 196700,
+              "change": -2600,
+              "changePct": -1.3,
+              "cap": 295050
             },
             {
               "code": "267260",
               "name": "HD현대일렉트릭",
-              "price": 730000,
-              "change": -17000,
-              "changePct": -2.28,
-              "cap": 263144
+              "price": 709000,
+              "change": -30000,
+              "changePct": -4.06,
+              "cap": 255574
             },
             {
               "code": "298040",
               "name": "효성중공업",
-              "price": 2791000,
-              "change": -63000,
-              "changePct": -2.21,
-              "cap": 260248
+              "price": 2725000,
+              "change": -78000,
+              "changePct": -2.78,
+              "cap": 254094
             }
           ]
         },
         {
           "name": "복합기업",
-          "cap": 773579,
-          "changePct": -5.01,
+          "cap": 776485,
+          "changePct": -0.96,
           "stocks": [
             {
               "code": "028260",
               "name": "삼성물산",
-              "price": 353000,
-              "change": -14000,
-              "changePct": -3.81,
-              "cap": 572452
+              "price": 349000,
+              "change": -9500,
+              "changePct": -2.65,
+              "cap": 565965
             },
             {
               "code": "000150",
               "name": "두산",
-              "price": 1242000,
-              "change": -114000,
-              "changePct": -8.41,
-              "cap": 201127
+              "price": 1300000,
+              "change": 45000,
+              "changePct": 3.59,
+              "cap": 210520
             }
           ]
         },
         {
           "name": "석유와가스",
-          "cap": 630927,
-          "changePct": -5.66,
+          "cap": 642445,
+          "changePct": -0.2,
           "stocks": [
             {
               "code": "034730",
               "name": "SK",
-              "price": 558000,
-              "change": -27000,
-              "changePct": -4.62,
-              "cap": 404565
+              "price": 555000,
+              "change": -15000,
+              "changePct": -2.63,
+              "cap": 402390
             },
             {
               "code": "096770",
               "name": "SK이노베이션",
-              "price": 133900,
-              "change": -10900,
-              "changePct": -7.53,
-              "cap": 226362
+              "price": 142000,
+              "change": 5300,
+              "changePct": 3.88,
+              "cap": 240055
             }
           ]
         },
         {
           "name": "생명보험",
-          "cap": 591000,
-          "changePct": -3.9,
+          "cap": 576000,
+          "changePct": -3.36,
           "stocks": [
             {
               "code": "032830",
               "name": "삼성생명",
-              "price": 295500,
-              "change": -12000,
-              "changePct": -3.9,
-              "cap": 591000
+              "price": 288000,
+              "change": -10000,
+              "changePct": -3.36,
+              "cap": 576000
             }
           ]
         },
         {
-          "name": "우주항공과국방",
-          "cap": 584213,
-          "changePct": 4.81,
+          "name": "기계",
+          "cap": 556007,
+          "changePct": -0.23,
           "stocks": [
             {
-              "code": "012450",
-              "name": "한화에어로스페이스",
-              "price": 1133000,
-              "change": 52000,
-              "changePct": 4.81,
-              "cap": 584213
+              "code": "034020",
+              "name": "두산에너빌리티",
+              "price": 86800,
+              "change": -200,
+              "changePct": -0.23,
+              "cap": 556007
             }
           ]
         }
@@ -431,312 +431,319 @@
       "id": "kosdaq",
       "name": "코스닥",
       "index": {
-        "value": 806.79,
-        "change": -13.85,
-        "changePct": -1.69
+        "value": 812.41,
+        "change": 5.62,
+        "changePct": 0.7
       },
-      "totalCap": 1444822,
+      "totalCap": 1478252,
       "sectors": [
         {
           "name": "반도체와반도체장비",
-          "cap": 584358,
-          "changePct": -4.41,
+          "cap": 571805,
+          "changePct": 0.91,
           "stocks": [
             {
               "code": "036930",
               "name": "주성엔지니어링",
-              "price": 202500,
-              "change": -6500,
-              "changePct": -3.11,
-              "cap": 94124
-            },
-            {
-              "code": "240810",
-              "name": "원익IPS",
-              "price": 109500,
-              "change": -800,
-              "changePct": -0.73,
-              "cap": 53747
+              "price": 197100,
+              "change": -8900,
+              "changePct": -4.32,
+              "cap": 91614
             },
             {
               "code": "039030",
               "name": "이오테크닉스",
-              "price": 425500,
-              "change": -20000,
-              "changePct": -4.49,
-              "cap": 52420
+              "price": 451000,
+              "change": 23000,
+              "changePct": 5.37,
+              "cap": 55561
+            },
+            {
+              "code": "240810",
+              "name": "원익IPS",
+              "price": 110300,
+              "change": 200,
+              "changePct": 0.18,
+              "cap": 54140
             },
             {
               "code": "058470",
               "name": "리노공업",
-              "price": 64200,
-              "change": -2200,
-              "changePct": -3.31,
-              "cap": 48928
+              "price": 65300,
+              "change": 200,
+              "changePct": 0.31,
+              "cap": 49766
             },
             {
               "code": "403870",
               "name": "HPSP",
-              "price": 50900,
-              "change": -2400,
-              "changePct": -4.5,
-              "cap": 41891
+              "price": 53000,
+              "change": 900,
+              "changePct": 1.73,
+              "cap": 43619
             },
             {
               "code": "095340",
               "name": "ISC",
-              "price": 178400,
-              "change": -11800,
-              "changePct": -6.2,
-              "cap": 37816
-            },
-            {
-              "code": "319660",
-              "name": "피에스케이",
-              "price": 114100,
-              "change": -8900,
-              "changePct": -7.24,
-              "cap": 33051
+              "price": 183700,
+              "change": 3500,
+              "changePct": 1.94,
+              "cap": 38939
             },
             {
               "code": "031980",
               "name": "피에스케이홀딩스",
-              "price": 152700,
-              "change": -4300,
-              "changePct": -2.74,
-              "cap": 32926
+              "price": 167000,
+              "change": 11500,
+              "changePct": 7.4,
+              "cap": 36009
+            },
+            {
+              "code": "319660",
+              "name": "피에스케이",
+              "price": 119700,
+              "change": 3600,
+              "changePct": 3.1,
+              "cap": 34673
             },
             {
               "code": "440110",
               "name": "파두",
-              "price": 60400,
-              "change": -8100,
-              "changePct": -11.82,
-              "cap": 30267
+              "price": 61500,
+              "change": 1100,
+              "changePct": 1.82,
+              "cap": 30818
             },
             {
               "code": "084370",
               "name": "유진테크",
-              "price": 129300,
-              "change": -2200,
-              "changePct": -1.67,
-              "cap": 29630
+              "price": 130200,
+              "change": -2000,
+              "changePct": -1.51,
+              "cap": 29837
             },
             {
               "code": "064760",
               "name": "티씨케이",
-              "price": 256000,
-              "change": -2000,
-              "changePct": -0.78,
-              "cap": 28619
+              "price": 264500,
+              "change": 3500,
+              "changePct": 1.34,
+              "cap": 29570
             },
             {
               "code": "131290",
               "name": "티에스이",
-              "price": 236000,
-              "change": -24500,
-              "changePct": -9.4,
-              "cap": 26105
-            },
-            {
-              "code": "095610",
-              "name": "테스",
-              "price": 132000,
-              "change": -11500,
-              "changePct": -8.01,
-              "cap": 25555
+              "price": 241500,
+              "change": 5500,
+              "changePct": 2.33,
+              "cap": 26713
             },
             {
               "code": "357780",
               "name": "솔브레인",
-              "price": 324000,
-              "change": -6000,
-              "changePct": -1.82,
-              "cap": 25203
+              "price": 327000,
+              "change": -500,
+              "changePct": -0.15,
+              "cap": 25436
             },
             {
-              "code": "080220",
-              "name": "제주반도체",
-              "price": 69900,
-              "change": -5300,
-              "changePct": -7.05,
-              "cap": 24076
+              "code": "095610",
+              "name": "테스",
+              "price": 129700,
+              "change": -2300,
+              "changePct": -1.74,
+              "cap": 25110
             }
           ]
         },
         {
           "name": "생물공학",
-          "cap": 276353,
-          "changePct": -3.57,
+          "cap": 279984,
+          "changePct": 0.54,
           "stocks": [
             {
               "code": "196170",
               "name": "알테오젠",
-              "price": 258000,
-              "change": -10000,
-              "changePct": -3.73,
-              "cap": 179710
-            },
-            {
-              "code": "298380",
-              "name": "에이비엘바이오",
-              "price": 63800,
-              "change": -2300,
-              "changePct": -3.48,
-              "cap": 35720
+              "price": 261500,
+              "change": 1500,
+              "changePct": 0.58,
+              "cap": 182148
             },
             {
               "code": "087010",
               "name": "펩트론",
-              "price": 138100,
-              "change": -7900,
-              "changePct": -5.41,
-              "cap": 32201
+              "price": 149300,
+              "change": 10200,
+              "changePct": 7.33,
+              "cap": 34813
+            },
+            {
+              "code": "298380",
+              "name": "에이비엘바이오",
+              "price": 59700,
+              "change": -5200,
+              "changePct": -8.01,
+              "cap": 33425
             },
             {
               "code": "145020",
               "name": "휴젤",
-              "price": 229500,
-              "change": -1500,
-              "changePct": -0.65,
-              "cap": 28722
+              "price": 236500,
+              "change": 4500,
+              "changePct": 1.94,
+              "cap": 29598
             }
           ]
         },
         {
           "name": "기계",
-          "cap": 127562,
-          "changePct": -3.37,
+          "cap": 133299,
+          "changePct": 3.21,
           "stocks": [
             {
               "code": "277810",
               "name": "레인보우로보틱스",
-              "price": 417500,
-              "change": -18500,
-              "changePct": -4.24,
-              "cap": 80994
+              "price": 438000,
+              "change": 17500,
+              "changePct": 4.16,
+              "cap": 84971
             },
             {
               "code": "108490",
               "name": "로보티즈",
-              "price": 317500,
-              "change": -6000,
-              "changePct": -1.85,
-              "cap": 46568
+              "price": 329500,
+              "change": 5000,
+              "changePct": 1.54,
+              "cap": 48328
             }
           ]
         },
         {
           "name": "화학",
-          "cap": 109028,
-          "changePct": -4.86,
+          "cap": 114052,
+          "changePct": 3.07,
           "stocks": [
             {
               "code": "086520",
               "name": "에코프로",
-              "price": 80300,
-              "change": -4100,
-              "changePct": -4.86,
-              "cap": 109028
+              "price": 84000,
+              "change": 2500,
+              "changePct": 3.07,
+              "cap": 114052
             }
           ]
         },
         {
           "name": "전기제품",
-          "cap": 101254,
-          "changePct": -6.17,
+          "cap": 104679,
+          "changePct": 2.98,
           "stocks": [
             {
               "code": "247540",
               "name": "에코프로비엠",
-              "price": 103500,
-              "change": -6800,
-              "changePct": -6.17,
-              "cap": 101254
+              "price": 107000,
+              "change": 3100,
+              "changePct": 2.98,
+              "cap": 104679
             }
           ]
         },
         {
           "name": "제약",
-          "cap": 94317,
-          "changePct": -1.86,
+          "cap": 94441,
+          "changePct": -0.89,
           "stocks": [
             {
               "code": "000250",
               "name": "삼천당제약",
-              "price": 155800,
-              "change": -4900,
-              "changePct": -3.05,
-              "cap": 36547
+              "price": 158700,
+              "change": 900,
+              "changePct": 0.57,
+              "cap": 37227
             },
             {
               "code": "141080",
               "name": "리가켐바이오",
               "price": 83700,
-              "change": -1500,
-              "changePct": -1.76,
+              "change": -1000,
+              "changePct": -1.18,
               "cap": 30985
             },
             {
               "code": "310210",
               "name": "보로노이",
-              "price": 144600,
-              "change": -500,
-              "changePct": -0.34,
-              "cap": 26785
+              "price": 141600,
+              "change": -3800,
+              "changePct": -2.61,
+              "cap": 26229
             }
           ]
         },
         {
           "name": "건강관리장비와용품",
-          "cap": 75773,
-          "changePct": -2.1,
+          "cap": 78510,
+          "changePct": 3.06,
           "stocks": [
             {
               "code": "028300",
               "name": "HLB",
-              "price": 30250,
-              "change": -1200,
-              "changePct": -3.82,
-              "cap": 40292
+              "price": 32500,
+              "change": 2150,
+              "changePct": 7.08,
+              "cap": 43289
             },
             {
               "code": "214450",
               "name": "파마리서치",
-              "price": 341500,
-              "change": -500,
-              "changePct": -0.15,
-              "cap": 35481
+              "price": 339000,
+              "change": -6500,
+              "changePct": -1.88,
+              "cap": 35221
             }
           ]
         },
         {
           "name": "전자장비와기기",
-          "cap": 46405,
-          "changePct": -6.86,
+          "cap": 48151,
+          "changePct": 1.68,
           "stocks": [
             {
               "code": "222800",
               "name": "심텍",
-              "price": 122200,
-              "change": -9000,
-              "changePct": -6.86,
-              "cap": 46405
+              "price": 126800,
+              "change": 2100,
+              "changePct": 1.68,
+              "cap": 48151
             }
           ]
         },
         {
           "name": "인터넷과카탈로그소매",
-          "cap": 29772,
-          "changePct": 4.37,
+          "cap": 28624,
+          "changePct": -2.68,
           "stocks": [
             {
               "code": "257720",
               "name": "실리콘투",
-              "price": 45400,
-              "change": 1900,
-              "changePct": 4.37,
-              "cap": 29772
+              "price": 43650,
+              "change": -1200,
+              "changePct": -2.68,
+              "cap": 28624
+            }
+          ]
+        },
+        {
+          "name": "생명과학도구및서비스",
+          "cap": 24707,
+          "changePct": 8.49,
+          "stocks": [
+            {
+              "code": "226950",
+              "name": "올릭스",
+              "price": 108600,
+              "change": 8500,
+              "changePct": 8.49,
+              "cap": 24707
             }
           ]
         }
