@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>지표추적자</title>
+  <meta name="description" content="시장·금리·물가 지표를 한 화면에서 추적하는 모바일 우선 웹앱" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="지표추적자" />
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/icon.svg" />
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <script>
+    // 첫 페인트 전에 테마를 적용해 깜빡임을 막는다.
+    try {
+      const t = localStorage.getItem('jp.theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch (_) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+
+  <header class="appbar">
+    <div class="appbar__inner">
+      <h1 class="appbar__title">
+        <span class="appbar__mark" aria-hidden="true"></span>
+        지표추적자
+      </h1>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="테마 변경">
+        <span class="icon-btn__glyph" aria-hidden="true">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" class="main">
+    <!-- 히트맵 (첫 화면) -->
+    <section id="view-heatmap" class="view" role="tabpanel" aria-labelledby="tab-heatmap" tabindex="-1">
+      <div class="segmented segmented--wide" id="marketSegmented" role="group" aria-label="시장 선택">
+        <button type="button" data-market="kospi">코스피</button>
+        <button type="button" data-market="kosdaq">코스닥</button>
+      </div>
+
+      <div class="hm-summary" id="marketSummary"></div>
+
+      <div class="hm-board">
+        <div id="heatmap" class="hm-canvas"></div>
+      </div>
+
+      <div class="hm-legend" aria-hidden="true">
+        <span>−3%</span>
+        <span class="hm-legend__bar" id="legendBar"></span>
+        <span>+3%</span>
+      </div>
+      <p class="hm-note">타일 크기·글자 = 시가총액, 색 = 등락률. 누르면 상세가 열립니다.</p>
+    </section>
+
+    <!-- 대시보드 -->
+    <section id="view-dashboard" class="view" role="tabpanel" aria-labelledby="tab-dashboard" tabindex="-1" hidden>
+      <div class="stat-row" id="statRow"></div>
+
+      <h2 class="section-title">
+        즐겨찾기
+        <span class="section-title__hint" id="pinnedCount"></span>
+      </h2>
+      <div id="pinnedGrid" class="grid"></div>
+
+      <h2 class="section-title">변동폭 상위</h2>
+      <div id="moversGrid" class="grid"></div>
+    </section>
+
+    <!-- 지표 목록 -->
+    <section id="view-list" class="view" role="tabpanel" aria-labelledby="tab-list" tabindex="-1" hidden>
+      <div class="search">
+        <span class="search__icon" aria-hidden="true">⌕</span>
+        <input id="searchInput" class="search__input" type="search" placeholder="지표 검색"
+               autocomplete="off" aria-label="지표 검색" />
+      </div>
+
+      <div id="chipBar" class="chipbar" role="group" aria-label="카테고리 필터"></div>
+
+      <div id="listGrid" class="grid"></div>
+      <p id="emptyState" class="empty" hidden>조건에 맞는 지표가 없습니다.</p>
+    </section>
+
+    <!-- 설정 -->
+    <section id="view-settings" class="view" role="tabpanel" aria-labelledby="tab-settings" tabindex="-1" hidden>
+      <h2 class="section-title">화면</h2>
+      <div class="panel">
+        <div class="row">
+          <span class="row__label">테마</span>
+          <div class="segmented" id="themeSegmented" role="group" aria-label="테마 선택">
+            <button type="button" data-theme-value="system">시스템</button>
+            <button type="button" data-theme-value="light">라이트</button>
+            <button type="button" data-theme-value="dark">다크</button>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">데이터</h2>
+      <div class="panel">
+        <div class="row">
+          <span class="row__label">기준일</span>
+          <span class="row__value" id="metaUpdatedAt">—</span>
+        </div>
+        <div class="row">
+          <span class="row__label">출처</span>
+          <span class="row__value" id="metaSource">—</span>
+        </div>
+        <div class="row">
+          <span class="row__label">지표 수</span>
+          <span class="row__value" id="metaCount">—</span>
+        </div>
+        <div class="row">
+          <span class="row__label">히트맵 종목</span>
+          <span class="row__value" id="metaStocks">—</span>
+        </div>
+        <div class="row">
+          <span class="row__label">수집 시각</span>
+          <span class="row__value" id="metaFetchedAt">—</span>
+        </div>
+      </div>
+
+      <h2 class="section-title">저장된 항목</h2>
+      <div class="panel">
+        <button id="resetPins" class="btn btn--danger" type="button">즐겨찾기 초기화</button>
+      </div>
+
+      <p class="foot">
+        지표추적자 · 시세는 네이버 금융, 해외 지표는 Yahoo Finance·FRED 에서 받습니다.
+        평일 장중(09:00–15:30)에는 10분마다, 마감 후 한 번 더 갱신합니다.
+        체결 즉시 반영되는 실시간 시세가 아니며 지연·오류가 있을 수 있으니
+        투자 판단의 근거로 삼지 마세요.
+      </p>
+    </section>
+  </main>
+
+
+  <nav class="tabbar" role="tablist" aria-label="주요 화면">
+    <button id="tab-heatmap" class="tab" role="tab" type="button"
+            aria-selected="true" aria-controls="view-heatmap" data-view="heatmap">
+      <span class="tab__glyph" aria-hidden="true">▩</span>
+      <span class="tab__label">히트맵</span>
+    </button>
+    <button id="tab-dashboard" class="tab" role="tab" type="button"
+            aria-selected="false" aria-controls="view-dashboard" data-view="dashboard" tabindex="-1">
+      <span class="tab__glyph" aria-hidden="true">▦</span>
+      <span class="tab__label">대시보드</span>
+    </button>
+    <button id="tab-list" class="tab" role="tab" type="button"
+            aria-selected="false" aria-controls="view-list" data-view="list" tabindex="-1">
+      <span class="tab__glyph" aria-hidden="true">☰</span>
+      <span class="tab__label">지표</span>
+    </button>
+    <button id="tab-settings" class="tab" role="tab" type="button"
+            aria-selected="false" aria-controls="view-settings" data-view="settings" tabindex="-1">
+      <span class="tab__glyph" aria-hidden="true">⚙</span>
+      <span class="tab__label">설정</span>
+    </button>
+  </nav>
+
+  <dialog id="detailDialog" class="sheet" aria-label="지표 상세">
+    <div class="sheet__inner" id="detailBody"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

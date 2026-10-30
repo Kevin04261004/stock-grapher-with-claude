@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="지표추적자">
+  <!-- maskable: 바깥 20% 는 잘려나갈 수 있으므로 그래픽을 안전 영역 안에 둔다 -->
+  <rect width="64" height="64" fill="#2f6df6"/>
+  <path d="M18 40 L27 32 L35 37 L47 24"
+        fill="none" stroke="#ffffff" stroke-width="4.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="47" cy="24" r="4" fill="#ffffff"/>
+</svg>
